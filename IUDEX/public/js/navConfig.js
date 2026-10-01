@@ -21,11 +21,28 @@ export const NAV_ITEMS = [
 // matching drawer item lit and show a sensible title in the app bar.
 export const ACTIVE_ALIASES = { chat: "chats", u: "discover" };
 
+// Titles for routes/params one level deeper than the drawer knows about —
+// Settings' own sub-screens, and the standalone pages reached only through
+// Settings > About. Keyed as "route" or "route/param".
+const EXTRA_TITLES = {
+  "settings/account": "Account",
+  "settings/privacy": "Privacy",
+  "settings/get-app": "Get App",
+  "settings/about": "About",
+  "help": "Help",
+  "support": "Support",
+  "contact": "Contact",
+  "policies": "Privacy & Policies"
+};
+
 export function resolveActiveRoute(route) {
   return ACTIVE_ALIASES[route] || route;
 }
 
-export function titleForRoute(route) {
+export function titleForRoute(route, param) {
+  if (param && EXTRA_TITLES[`${route}/${param}`]) return EXTRA_TITLES[`${route}/${param}`];
+  if (EXTRA_TITLES[route]) return EXTRA_TITLES[route];
+
   const resolved = resolveActiveRoute(route);
   return NAV_ITEMS.find((item) => item.route === resolved)?.label || "e-CON";
 }

@@ -36,6 +36,11 @@ registerRoute("chat", () => import("../pages/chat/chat.js"));
 registerRoute("settings", () => import("../pages/settings/settings.js"));
 registerRoute("groupchats", () => import("../pages/groupchats/groupchats.js"));
 registerRoute("community", () => import("../pages/community/community.js"));
+// Reached only through Settings > About, not from the main drawer.
+registerRoute("help", () => import("../pages/help/help.js"));
+registerRoute("support", () => import("../pages/support/support.js"));
+registerRoute("contact", () => import("../pages/contact/contact.js"));
+registerRoute("policies", () => import("../pages/policies/policies.js"));
 
 let shellMounted = false;
 let setActiveNav = null;
@@ -62,8 +67,8 @@ function renderShell() {
   setActiveNav = renderAppBar(appEl, (route) => navigate(route));
 
   initRouter(outlet, {
-    onChange: (route) => {
-      setActiveNav?.(route);
+    onChange: (route, param) => {
+      setActiveNav?.(route, param);
       setPresenceRoute(route);
     }
   });

@@ -977,11 +977,6 @@
 /* ==========================================================================
    e-CON — Settings
    ========================================================================== */
-.settings-heading {
-  margin: var(--space-6) 0 var(--space-3);
-  font-size: var(--text-base);
-  color: var(--text-secondary);
-}
 .settings-row {
   display: flex;
   align-items: center;
@@ -1108,3 +1103,108 @@
 }
 .request-bar--decide { background: var(--card); }
 .request-bar-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+
+/* ==========================================================================
+   e-CON — Settings category menu (Account / Privacy / Get App / About)
+   ========================================================================== */
+.settings-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.settings-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-4) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--card);
+  transition: background var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard);
+}
+.settings-menu-item:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border-strong); }
+.settings-menu-item:active { transform: scale(0.99); }
+
+.settings-menu-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent-highlight);
+}
+.settings-menu-icon svg { width: 20px; height: 20px; }
+
+.settings-menu-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.settings-menu-label { font-weight: 600; }
+.settings-menu-sub { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* Used for About's flat sub-list (Help / Support / Contact / Policies) —
+   no icon, no subtitle, just a label. */
+.settings-menu-item--flat { padding: var(--space-3) var(--space-4); }
+
+/* ---- FAQ (Help page) ---- */
+.faq-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before {
+  content: "+";
+  display: inline-block;
+  width: 1em;
+  color: var(--accent-highlight);
+  font-weight: 700;
+}
+.faq-item[open] summary::before { content: "2"; }
+.faq-item p {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+/* ---- Privacy & Policies ---- */
+.policy-draft-banner {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-5);
+}
+.policy-draft-banner strong { color: #fbbf24; }
+
+.policy-body h3 {
+  font-size: var(--text-base);
+  margin: var(--space-5) 0 var(--space-2);
+}
+.policy-body h3:first-child { margin-top: 0; }
+.policy-body p {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
