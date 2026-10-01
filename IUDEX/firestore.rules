@@ -6,9 +6,9 @@ rules_version = '2';
 // e-CON is a public, username-based messenger: anyone may create an account,
 // so there is no email whitelist here any more. Access is scoped by uid.
 //
-// The model in one line: profiles and usernames are publicly readable to
-// signed-in users (that is what makes search work), everything else is
-// readable only by the two people in the conversation.
+// The model in one line: public profile projections and username
+// reservations support signed-in search, full profiles serve profile screens,
+// and conversations are readable only by their participants.
 // ==========================================================================
 
 service cloud.firestore {
@@ -23,8 +23,8 @@ service cloud.firestore {
     }
 
     // ---- Profiles -------------------------------------------------------
-    // Readable by any signed-in user (Discover and @username search need
-    // this), writable only by their owner.
+    // Readable by signed-in users for profile and conversation screens,
+    // writable only by the profile owner. Discover uses publicProfiles.
     match /users/{uid} {
       allow read: if signedIn();
       allow create: if isSelf(uid);
@@ -46,7 +46,14 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create, update: if isSelf(uid)
                             && request.resource.data.keys().hasOnly(
-                                 ['username', 'name', 'photoURL']);
+                                 ['username', 'name', 'photoURL', 'searchTerms'])
+                            && request.resource.data.keys().hasAll(
+                                 ['username', 'name', 'photoURL', 'searchTerms'])
+                            && request.resource.data.username is string
+                            && request.resource.data.name is string
+                            && request.resource.data.photoURL is string
+                            && request.resource.data.searchTerms is list
+                            && request.resource.data.searchTerms.size() <= 210;
       allow delete: if false;
     }
 

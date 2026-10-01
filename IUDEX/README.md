@@ -92,7 +92,7 @@ users/{uid}
   joinedAt, lastSeen, presence: { online, updatedAt }
 
 publicProfiles/{uid}          ← Discover-only projection; no account fields
-  username, name, photoURL
+  username, name, photoURL, searchTerms
 
 usernames/{username}          ← document id IS the username
   uid, username, claimedAt
@@ -156,7 +156,7 @@ public/
     navbar.js  avatar.js  card.js  modal.js  toast.js  loader.js
   pages/
     home/       Chats — live conversation list
-    discover/   exact @username search
+    discover/   substring @username search
     profile/    #/u/<username> and #/me (inline editing)
     chat/       one conversation thread
     settings/   account, install, sign out
@@ -169,7 +169,7 @@ _archive/legacy-two-user/   not deployed — the old couple-app features
 | Hash | Screen |
 |---|---|
 | `#/chats` | conversation list (default) |
-| `#/discover` | exact `@username` search |
+| `#/discover` | partial `@username` search |
 | `#/u/<username>` | someone's profile |
 | `#/me` | your own profile |
 | `#/chat/<convId>` | a conversation |
@@ -179,9 +179,10 @@ _archive/legacy-two-user/   not deployed — the old couple-app features
 
 ## Notes
 
-**Discover searches exact usernames.** The unique `usernames/{username}`
-reservation document resolves one handle, and Discover makes no user query
-until the form is submitted.
+**Discover searches username substrings.** The public profile projection
+stores derived username substrings so Firestore can query matching handles,
+sort by username, and cap the response without reading the user collection.
+No user query runs until the search form is submitted.
 
 **Presence is a claim with an expiry.** Firestore has no reliable disconnect
 signal — mobile browsers kill tabs without firing anything — so a heartbeat

@@ -1,5 +1,5 @@
 // e-CON service worker. Bump this version when deploying changed static files.
-const CACHE_NAME = "econ-static-v4";
+const CACHE_NAME = "econ-static-v5";
 const APP_SHELL_URL = new URL("/index.html", self.location.origin);
 const STATIC_ICONS = new Set([
   "/assets/icons/android-chrome-192x192.png",

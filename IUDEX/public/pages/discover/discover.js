@@ -1,10 +1,11 @@
 // e-CON — Discover
-// Search for a specific @username.
+// Search username substrings without loading a user directory.
 import { h, escapeHTML } from "../../js/utils.js";
 import { avatarHTML } from "../../components/avatar.js";
 import { navigate } from "../../js/router.js";
 import { reportError } from "../../js/ui.js";
-import { findPublicUserByUsername, normalizeUsername } from "../../services/usernames.js";
+import { normalizeUsername } from "../../services/usernames.js";
+import { searchPublicProfilesByUsername } from "../../services/users.js";
 
 function userRowHTML(user) {
   return `
@@ -31,9 +32,7 @@ export async function render(container) {
         </div>
         <button class="btn btn--primary" type="submit">Search</button>
       </form>
-      <div id="discover-results" aria-live="polite">
-        <div class="empty-state"><p>Search for a username to find someone.</p></div>
-      </div>
+      <div id="discover-results" aria-live="polite"></div>
     </div>
   `));
 
@@ -53,30 +52,26 @@ export async function render(container) {
     const username = normalizeUsername(input.value);
     const token = ++searchToken;
     if (!username) {
-      resultsEl.innerHTML = `<div class="empty-state"><p>Search for a username to find someone.</p></div>`;
+      resultsEl.replaceChildren();
       return;
     }
-    resultsEl.innerHTML = `<div class="empty-state"><p>Searching for @${escapeHTML(username)}…</p></div>`;
+    resultsEl.innerHTML = `<div class="empty-state"><p>Searching...</p></div>`;
     try {
-      const user = await findPublicUserByUsername(username);
+      const users = await searchPublicProfilesByUsername(username);
       if (!active || token !== searchToken) return;
-      resultsEl.innerHTML = user?.username
-        ? userRowHTML(user)
-        : `<div class="empty-state"><p>No user found for @${escapeHTML(username)}</p></div>`;
+      resultsEl.innerHTML = users.length
+        ? `<div class="eyebrow" style="margin:22px 0 12px;">Search: ${escapeHTML(username)}</div>${users.map(userRowHTML).join("")}`
+        : `<div class="empty-state"><p>No users found for "${escapeHTML(username)}"</p></div>`;
     } catch (error) {
       if (!active || token !== searchToken) return;
       reportError(error, "searching usernames");
-      resultsEl.innerHTML = `<div class="empty-state"><p>Search failed. Try again in a moment.</p></div>`;
+      resultsEl.innerHTML = `<div class="empty-state"><p>Unable to search right now. Please try again.</p></div>`;
     }
   });
 
   input.addEventListener("input", () => {
     searchToken += 1;
-    if (!input.value) {
-      resultsEl.innerHTML = `<div class="empty-state"><p>Search for a username to find someone.</p></div>`;
-    } else {
-      resultsEl.replaceChildren();
-    }
+    resultsEl.replaceChildren();
   });
 
   return function teardown() {

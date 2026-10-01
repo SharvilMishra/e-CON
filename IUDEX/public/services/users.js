@@ -1,12 +1,16 @@
 // ==========================================================================
-// e-CON — User Directory Service
-// Discovery and search over the public `users` collection.
+// e-CON — User Profile Service
+// Profile updates, public Discover search, and presence.
 // ==========================================================================
 
 import {
-  getDocById, setDocById, subscribeDoc, serverTimestamp
+  getAll, getDocById, setDocById, subscribeDoc, serverTimestamp,
+  where, orderBy, limit
 } from "../firebase/firestore.js";
 import { auth } from "../firebase/config.js";
+import { normalizeUsername, usernameSearchTerms } from "./usernames.js";
+
+const DISCOVER_RESULT_LIMIT = 30;
 
 export async function getUserById(uid) {
   return getDocById("users", uid);
@@ -14,12 +18,40 @@ export async function getUserById(uid) {
 
 /** Keep the deliberately minimal, signed-in-readable Discover profile current. */
 export async function syncPublicProfile(profile) {
-  if (!profile?.uid) return;
-  await setDocById("publicProfiles", profile.uid, {
-    username: profile.username || "",
-    name: profile.name || "",
-    photoURL: profile.photoURL || ""
-  }, false);
+  if (!profile?.uid) return false;
+  try {
+    await setDocById("publicProfiles", profile.uid, {
+      username: profile.username || "",
+      name: profile.name || "",
+      photoURL: profile.photoURL || "",
+      searchTerms: usernameSearchTerms(profile.username || "")
+    }, false);
+    return true;
+  } catch (error) {
+    // Keep authentication and profile editing usable if Firestore rules have
+    // not yet been deployed; Discover will report its own query errors.
+    console.warn("[e-CON] public Discover profile sync deferred:", error?.code || error);
+    return false;
+  }
+}
+
+/** Query only public profiles whose indexed username contains the keyword. */
+export async function searchPublicProfilesByUsername(raw) {
+  const username = normalizeUsername(raw);
+  if (!username) return [];
+
+  const matches = await getAll("publicProfiles", [
+    where("searchTerms", "array-contains", username),
+    orderBy("username", "asc"),
+    limit(DISCOVER_RESULT_LIMIT)
+  ]);
+  return matches
+    .filter((profile) => profile.id !== auth.currentUser?.uid)
+    .map(({ username: handle, name, photoURL }) => ({
+      username: handle,
+      name: name || handle,
+      photoURL: photoURL || ""
+    }));
 }
 
 export function subscribeUser(uid, cb) {

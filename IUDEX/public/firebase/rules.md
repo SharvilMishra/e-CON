@@ -17,17 +17,20 @@ file explains *why* it's shaped the way it is.
 
 ## The model in one line
 
-Profiles and username reservations are readable by any signed-in user — that
-is what makes Discover and `@username` search work at all. Everything else is
-readable only by the two people in the conversation.
+Public profile projections and username reservations are readable by any
+signed-in user for Discover search. Full profiles are read by signed-in users
+for profile screens; everything else is readable only by conversation
+participants.
 
 ## Collections
 
 ### `publicProfiles/{uid}`
 
-Discover reads this projection instead of `users/{uid}`. It contains only
-`username`, `name`, and `photoURL`; writes are limited to the profile
-owner and the allowed field names are enforced by the rules.
+Discover queries this projection instead of `users/{uid}`. It contains only
+`username`, `name`, `photoURL`, and derived `searchTerms`; writes are limited
+to the profile owner and the allowed field names are enforced by the rules.
+`searchTerms` contains all normalized username substrings so Firestore can
+match partial keywords without reading the user collection.
 
 ### `users/{uid}`
 
@@ -37,8 +40,8 @@ owner and the allowed field names are enforced by the rules.
 | create / update | only `uid` itself |
 | delete | nobody |
 
-Profiles are public on purpose: a directory you can't read isn't a directory.
-Only put in a profile what you're willing for any signed-in user to see.
+Profile reads are available to signed-in users. Discover avoids reading this
+collection and uses the smaller `publicProfiles` projection instead.
 
 The update rule additionally pins `username`: once set, a direct profile write
 cannot change it. Handles are only ever assigned by the transaction below, and

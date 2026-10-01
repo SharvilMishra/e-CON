@@ -16,7 +16,6 @@
 // ==========================================================================
 
 import { runTransaction, docRef, getDocById, db, serverTimestamp } from "../firebase/firestore.js";
-import { auth } from "../firebase/config.js";
 
 export const USERNAME_MIN = 3;
 export const USERNAME_MAX = 20;
@@ -33,6 +32,18 @@ const RESERVED = new Set([
 
 export function normalizeUsername(raw = "") {
   return raw.trim().replace(/^@+/, "").toLowerCase();
+}
+
+/** Firestore substring-search terms for the app's 3–20 character usernames. */
+export function usernameSearchTerms(raw = "") {
+  const username = normalizeUsername(raw);
+  const terms = new Set();
+  for (let start = 0; start < username.length; start += 1) {
+    for (let end = start + 1; end <= username.length; end += 1) {
+      terms.add(username.slice(start, end));
+    }
+  }
+  return [...terms];
 }
 
 /**
@@ -114,11 +125,6 @@ export async function claimUsername(uid, raw) {
 
     tx.set(reservationRef, { uid, username, claimedAt: serverTimestamp() });
     tx.set(userRef, { username, usernameSetAt: serverTimestamp() }, { merge: true });
-    tx.set(docRef("publicProfiles", uid), {
-      username,
-      name: userSnap.data()?.name || "",
-      photoURL: userSnap.data()?.photoURL || ""
-    });
   });
 
   return username;
@@ -133,16 +139,4 @@ export async function findUserByUsername(raw) {
   if (!reservation?.uid) return null;
 
   return getDocById("users", reservation.uid);
-}
-
-/** Resolve only the minimum public profile used by Discover search. */
-export async function findPublicUserByUsername(raw) {
-  const username = normalizeUsername(raw);
-  if (!username) return null;
-  const reservation = await getDocById("usernames", username);
-  if (!reservation?.uid || reservation.uid === auth.currentUser?.uid) return null;
-  const profile = await getDocById("publicProfiles", reservation.uid);
-  return profile?.username === username
-    ? { username: profile.username, name: profile.name || "", photoURL: profile.photoURL || "" }
-    : null;
 }
