@@ -39,13 +39,13 @@ works when there's nobody else in the database. Rather than delete that work,
 it's parked in **`_archive/legacy-two-user/`**, which sits outside the
 `public/` directory and so is never deployed.
 
-**Nothing in `public/` references the old brand** except two deliberate
-migration compatibility points, both commented as such:
+User-facing branding in `public/` is e-CON. Historical compatibility names
+remain only where they are required:
 
 - `js/storage.js` — migrates any leftover `shideep_*` localStorage key to its
-  `econ_*` equivalent
-- `service-worker.js` — its activate handler deletes old `shideep-shell-*`
-  caches
+  `econ_*` equivalent and recognizes older storage prefixes
+- `sw.js` — removes caches from earlier e-CON and SHIDEEP service workers
+- `firebase/config.js` — retains the existing Firebase project identifiers
 
 ### Firebase identifiers
 
@@ -133,7 +133,7 @@ screens always read `users/{uid}` directly.
 public/
   index.html            metadata, OG/Twitter tags, SW registration
   manifest.json         PWA manifest
-  service-worker.js     offline shell + legacy cache cleanup
+  sw.js                 static asset cache + offline shell fallback
   css/                  global.css (tokens) · components.css · animations.css
   firebase/
     config.js           SDK handles — no whitelist

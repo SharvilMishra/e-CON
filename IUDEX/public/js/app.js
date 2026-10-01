@@ -24,6 +24,13 @@ import "./installPrompt.js"; // side effect: catches beforeinstallprompt early
 import { h } from "./utils.js";
 import { initializeTheme } from "./theme.js";
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .catch((error) => console.warn("[e-CON] service worker registration failed:", error));
+  }, { once: true });
+}
+
 const appEl = document.getElementById("app");
 
 /* ---- Routes -------------------------------------------------------------
