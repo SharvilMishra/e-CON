@@ -87,8 +87,8 @@ function updateMediaSession() {
   }
   navigator.mediaSession.metadata = new MediaMetadata({
     title: room.title || "YouTube video",
-    artist: room.author || "IUDEX",
-    album: "IUDEX",
+    artist: room.author || "e-CON",
+    album: "e-CON",
     artwork: [
       { src: room.thumbnail || thumbnailFor(room.videoId), sizes: "480x360", type: "image/jpeg" }
     ]

@@ -210,7 +210,7 @@ function openViewer(photo) {
   });
 
   function handleDelete(p) {
-    confirmDialog("This photo will be removed for both of you. (The original stays wherever you linked it from — this only removes it from IUDEX.)", {
+    confirmDialog("This photo will be removed for both of you. (The original stays wherever you linked it from — this only removes it from e-CON.)", {
       onConfirm: async () => {
         try {
           await deleteDocById("gallery", p.id);

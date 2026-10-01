@@ -4,48 +4,22 @@
 // ==========================================================================
 
 import {
-  getAll, getDocById, setDocById, subscribeDoc,
-  orderBy, limit, startAt, endAt, serverTimestamp
+  getDocById, setDocById, subscribeDoc, serverTimestamp
 } from "../firebase/firestore.js";
-import { normalizeUsername } from "./usernames.js";
 import { auth } from "../firebase/config.js";
-
-/**
- * The Discover feed: every account that has claimed a username.
- *
- * Ordered by username rather than join date on purpose — `orderBy` skips
- * documents that lack the field entirely, so this also filters out
- * half-onboarded accounts for free, with no composite index needed.
- */
-export async function listUsers(max = 40) {
-  const users = await getAll("users", [orderBy("username"), limit(max)]);
-  return users.filter((u) => u.username && u.uid !== auth.currentUser?.uid);
-}
-
-/**
- * Prefix search on @username.
- *
- * Firestore has no LIKE/contains operator, so a prefix range query is the
- * only server-side option: everything from the query string up to the same
- * string plus a very high code point. This is why usernames are stored
- * lowercased — the range is byte-ordered, so mixed case would silently
- * miss matches.
- */
-export async function searchUsersByUsername(raw, max = 20) {
-  const q = normalizeUsername(raw);
-  if (!q) return [];
-
-  const results = await getAll("users", [
-    orderBy("username"),
-    startAt(q),
-    endAt(`${q}\uf8ff`),
-    limit(max)
-  ]);
-  return results.filter((u) => u.uid !== auth.currentUser?.uid);
-}
 
 export async function getUserById(uid) {
   return getDocById("users", uid);
+}
+
+/** Keep the deliberately minimal, signed-in-readable Discover profile current. */
+export async function syncPublicProfile(profile) {
+  if (!profile?.uid) return;
+  await setDocById("publicProfiles", profile.uid, {
+    username: profile.username || "",
+    name: profile.name || "",
+    photoURL: profile.photoURL || ""
+  }, false);
 }
 
 export function subscribeUser(uid, cb) {
@@ -63,7 +37,9 @@ export async function updateMyProfile({ name, bio, photoURL }) {
   if (photoURL !== undefined) patch.photoURL = photoURL.trim();
 
   await setDocById("users", uid, patch, true);
-  return getDocById("users", uid);
+  const profile = await getDocById("users", uid);
+  await syncPublicProfile(profile);
+  return profile;
 }
 
 /**

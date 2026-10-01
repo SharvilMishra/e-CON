@@ -31,6 +31,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { auth, googleProvider } from "./config.js";
 import { getDocById, setDocById, serverTimestamp } from "./firestore.js";
+import { syncPublicProfile } from "../services/users.js";
 
 /* -------------------------------------------------------------------------
    Profile seeding
@@ -61,7 +62,9 @@ async function seedProfile(user, { displayName } = {}) {
     true
   );
 
-  return getDocById("users", user.uid);
+  const profile = await getDocById("users", user.uid);
+  await syncPublicProfile(profile);
+  return profile;
 }
 
 /* -------------------------------------------------------------------------
@@ -177,6 +180,7 @@ async function emitForUser(user, callback) {
   try {
     profile = await getDocById("users", user.uid);
     if (!profile) profile = await seedProfile(user);
+    else await syncPublicProfile(profile);
   } catch (err) {
     console.error("[auth] could not load profile:", err);
     callback({ status: "error", user, error: err });

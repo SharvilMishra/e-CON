@@ -8,7 +8,7 @@ import { back } from "../../js/router.js";
 const FAQ = [
   {
     q: "How do I message someone?",
-    a: "Go to Discover, search their @username, open their profile, and tap Message. If you don't know their exact handle, browsing Discover shows everyone who's joined."
+    a: "Go to Discover, search their @username, open their profile, and tap Message."
   },
   {
     q: "What does a private account do?",
@@ -16,7 +16,7 @@ const FAQ = [
   },
   {
     q: "How do I make my own account private?",
-    a: "Settings → Privacy → toggle Private account. This only changes what happens when someone new messages you — it doesn't hide your profile from Discover or search."
+    a: "Settings → Privacy → toggle Private account. This changes what happens when someone new messages you: their first message becomes a request for your approval."
   },
   {
     q: "Can I change my @username?",

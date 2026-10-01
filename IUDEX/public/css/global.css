@@ -29,6 +29,8 @@
   --success: #34D399;
   --warning: #FBBF24;
   --danger: #F87171;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --overlay: rgba(2, 6, 16, 0.55);
 
   /* ---- Radius ---- */
   --radius-lg: 24px;
@@ -76,6 +78,28 @@
   /* ---- Safe areas (notches / gesture bars — Android & iOS) ---- */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #F5F7FB;
+  --card: #FFFFFF;
+  --card-elevated: #EEF2F8;
+  --border: rgba(15, 23, 42, 0.10);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --text-primary: #172033;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --accent-primary-dim: rgba(37, 99, 235, 0.10);
+  --accent-secondary-dim: rgba(14, 165, 233, 0.10);
+  --accent-highlight: #0284C7;
+  --accent-highlight-dim: rgba(2, 132, 199, 0.10);
+  --success: #059669;
+  --warning: #B45309;
+  --danger: #DC2626;
+  --surface-hover: rgba(15, 23, 42, 0.045);
+  --overlay: rgba(15, 23, 42, 0.35);
+  color-scheme: light;
 }
 
 /* ---- Reset ---- */

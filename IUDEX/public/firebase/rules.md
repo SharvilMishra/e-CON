@@ -23,6 +23,12 @@ readable only by the two people in the conversation.
 
 ## Collections
 
+### `publicProfiles/{uid}`
+
+Discover reads this projection instead of `users/{uid}`. It contains only
+`username`, `name`, and `photoURL`; writes are limited to the profile
+owner and the allowed field names are enforced by the rules.
+
 ### `users/{uid}`
 
 | Operation | Who |

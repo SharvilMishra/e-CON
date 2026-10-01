@@ -57,7 +57,7 @@
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
 }
-.btn--ghost:hover { background: rgba(255,255,255,0.04); }
+.btn--ghost:hover { background: var(--surface-hover); }
 
 .btn--danger {
   background: var(--danger);
@@ -68,7 +68,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.05);
+  background: var(--surface-hover);
 }
 
 /* Button ripple */
@@ -100,7 +100,7 @@
 }
 .field input,
 .field textarea {
-  background: rgba(255,255,255,0.04);
+  background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
@@ -152,7 +152,7 @@
   border-radius: var(--radius-md);
   color: var(--text-secondary);
 }
-.app-bar-menu-btn:hover { background: rgba(255, 255, 255, 0.06); color: var(--text-primary); }
+.app-bar-menu-btn:hover { background: var(--surface-hover); color: var(--text-primary); }
 .app-bar-menu-btn svg { width: 22px; height: 22px; }
 
 .app-bar-title {
@@ -170,7 +170,7 @@
 .nav-drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 16, 0.55);
+  background: var(--overlay);
   z-index: 90;
   opacity: 0;
   pointer-events: none;
@@ -239,10 +239,10 @@
               color var(--dur-fast) var(--ease-standard);
 }
 .nav-drawer-item svg { width: 21px; height: 21px; flex-shrink: 0; }
-.nav-drawer-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+.nav-drawer-item:hover { background: var(--surface-hover); color: var(--text-primary); }
 .nav-drawer-item.active {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-hover);
   border-left-color: var(--accent-secondary);
   font-weight: 600;
 }
@@ -251,7 +251,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 16, 0.6);
+  background: var(--overlay);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -450,7 +450,7 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   padding: 4px;
@@ -537,7 +537,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 0 var(--space-3) 0 var(--space-4);
@@ -591,7 +591,7 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-strong);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-hover);
   font-size: var(--text-sm);
   color: var(--text-secondary);
   transition: border-color var(--dur-fast) var(--ease-standard),
@@ -667,14 +667,16 @@
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-hover);
   color: var(--text-muted);
   font-size: var(--text-sm);
   margin-bottom: var(--space-5);
 }
 .search-trigger:hover { border-color: var(--border-strong); }
 
-.search-field { margin-bottom: var(--space-2); }
+.search-field { margin-bottom: var(--space-2); flex-direction: row; align-items: stretch; }
+.search-field .input-affix { flex: 1; min-width: 0; }
+.search-field > .btn { flex-shrink: 0; }
 
 /* ==========================================================================
    e-CON — Chat list & user rows
@@ -696,7 +698,7 @@
 }
 .chat-row:hover,
 .user-row:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-hover);
   border-color: var(--border);
 }
 .chat-row:active,
@@ -834,7 +836,7 @@
   padding: var(--space-1);
   border-radius: var(--radius-md);
 }
-.chat-peer:hover { background: rgba(255, 255, 255, 0.04); }
+.chat-peer:hover { background: var(--surface-hover); }
 .chat-peer-text { min-width: 0; display: flex; flex-direction: column; }
 .chat-peer-name {
   font-weight: 700;
@@ -966,7 +968,7 @@
 .composer input {
   flex: 1;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   padding: var(--space-3) var(--space-5);
@@ -1058,7 +1060,7 @@
   padding: var(--space-2) var(--space-2);
   border-radius: var(--radius-md);
 }
-.request-row:hover { background: rgba(255, 255, 255, 0.03); }
+.request-row:hover { background: var(--surface-hover); }
 .request-row-identity {
   display: flex;
   align-items: center;
@@ -1132,7 +1134,7 @@
   transition: background var(--dur-fast) var(--ease-standard),
               border-color var(--dur-fast) var(--ease-standard);
 }
-.settings-menu-item:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border-strong); }
+.settings-menu-item:hover { background: var(--surface-hover); border-color: var(--border-strong); }
 .settings-menu-item:active { transform: scale(0.99); }
 
 .settings-menu-icon {
@@ -1143,7 +1145,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-hover);
   color: var(--accent-highlight);
 }
 .settings-menu-icon svg { width: 20px; height: 20px; }
@@ -1161,6 +1163,14 @@
 /* Used for About's flat sub-list (Help / Support / Contact / Policies) —
    no icon, no subtitle, just a label. */
 .settings-menu-item--flat { padding: var(--space-3) var(--space-4); }
+.appearance-option { cursor: pointer; }
+.appearance-option > input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0 var(--space-1) 0 0;
+  flex: 0 0 auto;
+  accent-color: var(--accent-primary);
+}
 
 /* ---- FAQ (Help page) ---- */
 .faq-list { display: flex; flex-direction: column; gap: var(--space-2); }

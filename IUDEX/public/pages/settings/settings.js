@@ -17,6 +17,7 @@ import { showToast } from "../../components/toast.js";
 import { reportError } from "../../js/ui.js";
 import { navigate, back } from "../../js/router.js";
 import { auth } from "../../firebase/config.js";
+import { getTheme, setTheme } from "../../js/theme.js";
 import { logout } from "../../firebase/auth.js";
 import { getUserById, setPrivateAccount, isPrivateAccount } from "../../services/users.js";
 import {
@@ -27,6 +28,7 @@ const ICONS = {
   account: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.6 3.6-6 8-6s8 2.4 8 6"/>`,
   privacy: `<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>`,
   getapp: `<path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>`,
+  appearance: `<circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18Z"/>`,
   about: `<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 11.5h1v5h1"/>`
 };
 function iconSVG(name) {
@@ -52,6 +54,7 @@ function menuHTML() {
   const rows = [
     { key: "account", icon: "account", label: "Account", sub: "Personal details, sign out" },
     { key: "privacy", icon: "privacy", label: "Privacy", sub: "Private or public account" },
+    { key: "appearance", icon: "appearance", label: "Appearance", sub: "Theme and display preferences" },
     { key: "getapp", route: "get-app", icon: "getapp", label: "Get App", sub: "Add to your home screen" },
     { key: "about", icon: "about", label: "About", sub: "Help, support, contact, policies" }
   ];
@@ -209,6 +212,32 @@ async function renderPrivacy(container) {
   return function teardown() {};
 }
 
+function renderAppearance(container) {
+  const options = [
+    ["dark", "Dark", "Always use dark mode"],
+    ["light", "Light", "Always use light mode"],
+    ["system", "System", "Follow your device settings"]
+  ];
+  container.appendChild(h(`
+    <div class="page settings-page">
+      ${backHeaderHTML("Appearance")}
+      <div class="eyebrow settings-section-label">Theme</div>
+      <div class="settings-menu appearance-options">
+        ${options.map(([value, label, sub]) => `
+          <label class="settings-menu-item appearance-option">
+            <input type="radio" name="theme" value="${value}" ${getTheme() === value ? "checked" : ""}>
+            <span class="settings-menu-text"><span class="settings-menu-label">${label}</span><span class="settings-menu-sub">${sub}</span></span>
+          </label>`).join("")}
+      </div>
+    </div>
+  `));
+  wireBackButton();
+  container.querySelectorAll('input[name="theme"]').forEach((radio) => {
+    radio.addEventListener("change", () => setTheme(radio.value));
+  });
+  return function teardown() {};
+}
+
 /* ==========================================================================
    Get App
    ========================================================================== */
@@ -267,9 +296,9 @@ async function renderGetApp(container) {
 
 async function renderAbout(container) {
   const rows = [
-    { route: "help", label: "Help", sub: "Get help with IUDEX" },
+    { route: "help", label: "Help", sub: "Get help with e-CON" },
     { route: "support", label: "Support", sub: "Get support" },
-    { route: "contact", label: "Contact", sub: "Contact the IUDEX team" },
+    { route: "contact", label: "Contact", sub: "Contact the e-CON team" },
     { route: "policies", label: "Privacy & Policies", sub: "Privacy, terms and policies" }
   ];
 
@@ -311,6 +340,7 @@ async function renderAbout(container) {
 const SECTIONS = {
   account: renderAccount,
   privacy: renderPrivacy,
+  appearance: renderAppearance,
   "get-app": renderGetApp,
   about: renderAbout
 };

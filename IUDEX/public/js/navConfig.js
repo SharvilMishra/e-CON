@@ -27,6 +27,7 @@ export const ACTIVE_ALIASES = { chat: "chats", u: "discover" };
 const EXTRA_TITLES = {
   "settings/account": "Account",
   "settings/privacy": "Privacy",
+  "settings/appearance": "Appearance",
   "settings/get-app": "Get App",
   "settings/about": "About",
   "help": "Help",

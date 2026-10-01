@@ -16,6 +16,7 @@
 // ==========================================================================
 
 import { runTransaction, docRef, getDocById, db, serverTimestamp } from "../firebase/firestore.js";
+import { auth } from "../firebase/config.js";
 
 export const USERNAME_MIN = 3;
 export const USERNAME_MAX = 20;
@@ -113,6 +114,11 @@ export async function claimUsername(uid, raw) {
 
     tx.set(reservationRef, { uid, username, claimedAt: serverTimestamp() });
     tx.set(userRef, { username, usernameSetAt: serverTimestamp() }, { merge: true });
+    tx.set(docRef("publicProfiles", uid), {
+      username,
+      name: userSnap.data()?.name || "",
+      photoURL: userSnap.data()?.photoURL || ""
+    });
   });
 
   return username;
@@ -127,4 +133,16 @@ export async function findUserByUsername(raw) {
   if (!reservation?.uid) return null;
 
   return getDocById("users", reservation.uid);
+}
+
+/** Resolve only the minimum public profile used by Discover search. */
+export async function findPublicUserByUsername(raw) {
+  const username = normalizeUsername(raw);
+  if (!username) return null;
+  const reservation = await getDocById("usernames", username);
+  if (!reservation?.uid || reservation.uid === auth.currentUser?.uid) return null;
+  const profile = await getDocById("publicProfiles", reservation.uid);
+  return profile?.username === username
+    ? { username: profile.username, name: profile.name || "", photoURL: profile.photoURL || "" }
+    : null;
 }

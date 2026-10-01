@@ -40,6 +40,16 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Minimal profile projection for username discovery. Keeping this
+    // separate means Discover can never read email or account-only fields.
+    match /publicProfiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isSelf(uid)
+                            && request.resource.data.keys().hasOnly(
+                                 ['username', 'name', 'photoURL']);
+      allow delete: if false;
+    }
+
     // ---- Username reservations -----------------------------------------
     // Document id IS the username, so Firestore itself enforces uniqueness.
     // Create only, pointing at yourself: no updates, no deletes, no

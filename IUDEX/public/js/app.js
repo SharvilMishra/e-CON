@@ -22,6 +22,7 @@ import { loaderScreen } from "../components/loader.js";
 import { showToast } from "../components/toast.js";
 import "./installPrompt.js"; // side effect: catches beforeinstallprompt early
 import { h } from "./utils.js";
+import { initializeTheme } from "./theme.js";
 
 const appEl = document.getElementById("app");
 
@@ -81,6 +82,7 @@ function renderShell() {
 /* ---- Boot --------------------------------------------------------------- */
 
 migrateLegacyKeys();
+initializeTheme();
 renderLoading();
 
 // Resolve a pending Google redirect before the first auth callback lands,

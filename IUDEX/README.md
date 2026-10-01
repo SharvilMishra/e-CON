@@ -91,6 +91,9 @@ users/{uid}
   uid, username, name, email, photoURL, bio
   joinedAt, lastSeen, presence: { online, updatedAt }
 
+publicProfiles/{uid}          ← Discover-only projection; no account fields
+  username, name, photoURL
+
 usernames/{username}          ← document id IS the username
   uid, username, claimedAt
 
@@ -139,7 +142,7 @@ public/
     rules.md            why the security rules look the way they do
   services/
     usernames.js        validation, availability, transactional claim
-    users.js            directory, prefix search, profile updates, presence
+    users.js            profile updates and presence
     conversations.js    threads, messages, typing, read state
   js/
     app.js              boot + auth-state routing
@@ -153,7 +156,7 @@ public/
     navbar.js  avatar.js  card.js  modal.js  toast.js  loader.js
   pages/
     home/       Chats — live conversation list
-    discover/   browse everyone, prefix-search @usernames
+    discover/   exact @username search
     profile/    #/u/<username> and #/me (inline editing)
     chat/       one conversation thread
     settings/   account, install, sign out
@@ -166,7 +169,7 @@ _archive/legacy-two-user/   not deployed — the old couple-app features
 | Hash | Screen |
 |---|---|
 | `#/chats` | conversation list (default) |
-| `#/discover` | user directory + `@username` search |
+| `#/discover` | exact `@username` search |
 | `#/u/<username>` | someone's profile |
 | `#/me` | your own profile |
 | `#/chat/<convId>` | a conversation |
@@ -176,11 +179,9 @@ _archive/legacy-two-user/   not deployed — the old couple-app features
 
 ## Notes
 
-**Search is a prefix match, server-side.** Firestore has no `LIKE` operator,
-so `searchUsersByUsername` uses a range query (`startAt(q)` → `endAt(q\uf8ff)`).
-Usernames are stored lowercased because that range is byte-ordered — mixed
-case would silently miss matches. Searching for `har` finds `harsh`, but not
-`mahar`; substring search would need Algolia or an equivalent.
+**Discover searches exact usernames.** The unique `usernames/{username}`
+reservation document resolves one handle, and Discover makes no user query
+until the form is submitted.
 
 **Presence is a claim with an expiry.** Firestore has no reliable disconnect
 signal — mobile browsers kill tabs without firing anything — so a heartbeat
