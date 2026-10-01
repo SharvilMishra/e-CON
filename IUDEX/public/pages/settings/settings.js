@@ -56,7 +56,7 @@ function menuHTML() {
     { key: "about", icon: "about", label: "About", sub: "Help, support, contact, policies" }
   ];
   return `
-    <div class="page">
+    <div class="page settings-page">
       <div class="page-head"><h1>Settings</h1></div>
       <div class="settings-menu">
         ${rows.map((r) => `
@@ -97,7 +97,7 @@ async function renderAccount(container) {
   const user = auth.currentUser;
 
   container.appendChild(h(`
-    <div class="page">
+    <div class="page settings-page">
       ${backHeaderHTML("Account")}
       <div id="settings-account">${skeleton("height:92px;")}</div>
 
@@ -159,7 +159,7 @@ async function renderAccount(container) {
 
 async function renderPrivacy(container) {
   container.appendChild(h(`
-    <div class="page">
+    <div class="page settings-page">
       ${backHeaderHTML("Privacy")}
       <div class="card settings-row settings-row--toggle">
         <span class="settings-toggle-text">
@@ -215,7 +215,7 @@ async function renderPrivacy(container) {
 
 async function renderGetApp(container) {
   container.appendChild(h(`
-    <div class="page">
+    <div class="page settings-page">
       ${backHeaderHTML("Get App")}
       <div id="get-app-body">${skeleton("height:120px;")}</div>
     </div>
@@ -267,25 +267,30 @@ async function renderGetApp(container) {
 
 async function renderAbout(container) {
   const rows = [
-    { route: "help", label: "Help" },
-    { route: "support", label: "Support" },
-    { route: "contact", label: "Contact" },
-    { route: "policies", label: "Privacy & Policies" }
+    { route: "help", label: "Help", sub: "Get help with IUDEX" },
+    { route: "support", label: "Support", sub: "Get support" },
+    { route: "contact", label: "Contact", sub: "Contact the IUDEX team" },
+    { route: "policies", label: "Privacy & Policies", sub: "Privacy, terms and policies" }
   ];
 
   container.appendChild(h(`
-    <div class="page">
+    <div class="page settings-page">
       ${backHeaderHTML("About")}
+      <div class="eyebrow settings-section-label">Support</div>
       <div class="settings-menu">
         ${rows.map((r) => `
-          <button class="settings-menu-item settings-menu-item--flat" data-route="${r.route}">
-            <span class="settings-menu-label">${escapeHTML(r.label)}</span>
+          <button class="settings-menu-item" data-route="${r.route}">
+            <span class="settings-menu-text">
+              <span class="settings-menu-label">${escapeHTML(r.label)}</span>
+              <span class="settings-menu-sub">${escapeHTML(r.sub)}</span>
+            </span>
             <span class="user-row-chevron" aria-hidden="true">›</span>
           </button>`).join("")}
       </div>
-      <div class="card settings-row" style="margin-top:22px;">
+      <div class="eyebrow settings-section-label">General</div>
+      <div class="card settings-row settings-version">
         <span class="text-muted">Version</span>
-        <span>e-CON 1.0</span>
+        <span>1.0</span>
       </div>
     </div>
   `));
